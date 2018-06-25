@@ -50,7 +50,7 @@ export default {
   'READ_SOCIAL_STREAM': '读用户社交信息',
   'READ_SMS': '读取短信',
   'READ_PROFILE': '读个人资料',
-  'READ_PHONE_STATE': '访问通话状态',
+  'READ_PHONE_STATE': '获取手机状态',
   'READ_LOGS': '读系统日志',
   'READ_INPUT_STATE': '获取输入状态',
   'READ_FRAME_BUFFER': '屏幕截取',
