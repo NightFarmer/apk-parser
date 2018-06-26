@@ -24,7 +24,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  console.log('activate')
+  // console.log('activate')
   if (!BrowserWindow.getAllWindows() || BrowserWindow.getAllWindows().length === 0) {
     newWindow()
   }
@@ -39,10 +39,10 @@ function newWindow (optionsArg) {
     show: false,
     maximizable: false,
     title: 'Apk Parser',
-    alwaysOnTop: !!options['alwaysOnTop']
-    // resizable: false,
-    // fullscreen: false,
-    // fullscreenable: false
+    alwaysOnTop: !!options['alwaysOnTop'],
+    resizable: false,
+    fullscreen: false,
+    fullscreenable: false
   })
   // mainWindow.isMenuBarVisible(false)
 
