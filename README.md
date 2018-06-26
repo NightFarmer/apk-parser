@@ -6,7 +6,12 @@
 
 ## 预览
 
-占坑
+### Mac
+![Mac](https://github.com/NightFarmer/apk-parser/blob/f49e68f03103a6c8c95afc9be44978dcacdfc231/screenshot/on-mac.png?raw=true)
+
+### 操作
+![操作预览](https://github.com/NightFarmer/apk-parser/blob/f49e68f03103a6c8c95afc9be44978dcacdfc231/screenshot/apk-parser-mac.gif?raw=true)
+
 
 ## 下载
 
@@ -14,9 +19,9 @@
 
 ## 源码构建
 
-源码构建需要NodeJs环境，通过[Node官网](https://nodejs.org/)下载安装或使用[NVM](https://github.com/creationix/nvm)进行安装。
-使用Golang编写的解压命令已经编译后内置在/static/unzip文件夹中，所以不需要额外搭建Golang环境。
-electron构建需要下载依赖文件，建议使用[cnpm](https://npm.taobao.org/)代替npm进行构建
+源码构建需要NodeJs环境，通过[Node官网](https://nodejs.org/)下载安装或使用[NVM](https://github.com/creationix/nvm)进行安装。  
+使用Golang编写的解压命令已经编译后内置在/static/unzip文件夹中，所以不需要额外搭建Golang环境。  
+electron构建需要下载依赖文件，建议使用[cnpm](https://npm.taobao.org/)代替npm进行构建。  
 
 ### 安装cnpm(可选)
 
