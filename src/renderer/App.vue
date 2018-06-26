@@ -570,7 +570,6 @@
         background: #999999;
         opacity: 0.1;
 
-
         pointer-events: none;
     }
 
@@ -581,5 +580,7 @@
         margin-bottom: 20px;
         padding: 10px;
         border-radius: 5px;
+
+        pointer-events: auto;
     }
 </style>
