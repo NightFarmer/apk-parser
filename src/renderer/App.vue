@@ -9,7 +9,7 @@
                 <div class="label">
                     图标
                 </div>
-                <div class="icon_border" v-if="apkInfo.icon==='xml'">不支持<br/>预览</div>
+                <div class="icon_border" v-if="apkInfo.icon==='err'">不支持<br/>预览</div>
                 <div class="icon_border" v-else-if="!apkInfo.icon"></div>
                 <img :src="apkInfo.icon" class="icon" v-else=""/>
             </div>
@@ -141,14 +141,11 @@
 </template>
 
 <script>
-  import electron, {remote, ipcRenderer as ipc, BrowserWindow, shell} from 'electron'
-  import path from 'path'
+  import {remote, ipcRenderer as ipc, BrowserWindow, shell} from 'electron'
   import {exec} from 'child_process'
   import md5File from 'md5-file'
   import PermissionMap from '../dict/PermissionMap'
   import VersionMap from '../dict/VersionMap'
-  import os from 'os'
-  import fs from 'fs'
   import CheckBox from './components/CheckBox'
 
   const PrimaryColor = '#1aad86'
@@ -157,7 +154,6 @@
     name: 'apk-parser',
     components: {
       CheckBox
-      // LandingPage
     },
     data: function () {
       return {
@@ -186,7 +182,6 @@
         shell.openExternal('https://github.com/NightFarmer/apk-parser')
       },
       newWindow: function () {
-        // console.log(11)
         ipc.send('newWindow')
       },
       onDrag: function (e) {
@@ -196,7 +191,9 @@
         e.preventDefault()
         let fileList = e.dataTransfer.files
         const file = fileList[0]
-        this.parseApk(file)
+        const infoStr = ipc.sendSync('parseApk', file.path)
+        console.log(infoStr)
+        infoStr && this.parseInfo(infoStr, file)
       },
       warning: function (msg) {
         remote.dialog.showMessageBox({
@@ -204,34 +201,6 @@
           title: '提示',
           message: msg
           // detail: '232323'
-        })
-      },
-      parseApk: function (apkFile) {
-        const apkPath = apkFile.path
-
-        let aaptDir = path.join(__static, 'aapt')
-        let aaptFileName = ''
-        switch (os.platform()) {
-          case 'darwin':
-            aaptFileName = 'aapt_darwin'
-            break
-          case 'linux':
-            aaptFileName = 'aapt_linux'
-            break
-          case 'windows':
-            aaptFileName = 'aapt.exe'
-            break
-          default:
-            this.warning('不支持当前平台')
-            return
-        }
-        exec(`"${path.join(aaptDir, aaptFileName)}" d badging "${apkPath}"`, (err, stdout, stderr) => {
-          if (err) {
-            console.log(stderr)
-            this.warning('文件解析失败')
-            return
-          }
-          this.parseInfo(stdout, apkFile)
         })
       },
       parseInfo: async function (stdout, apkFile) {
@@ -248,12 +217,13 @@
         apkInfo.minSdk = `API${minSdk} ${VersionMap[minSdk] || ''}`
 
         let perList = this.regexpList(stdout, /uses-permission: name='android.permission\.([^']+)'/g)
+        if (!perList || !perList.length) {
+          perList = this.regexpList(stdout, /uses-permission:'android.permission\.([^']+)'/g)
+        }
 
         perList = [...new Set(perList)]
         apkInfo.permissionList = perList.map(it => PermissionMap[it] ? `${PermissionMap[it]} - ${it}` : it)
-
         apkInfo.fileName = apkPath
-
         apkInfo.fileMD5 = md5File.sync(apkPath)
 
         const size = apkFile.size
@@ -271,25 +241,8 @@
         apkInfo.fileSize = sizeStr
 
         let iconPath = this.regexpOne(stdout, /icon='([^']+)'/g)
-        let tmpDir = os.tmpdir()
-        tmpDir = path.join(tmpDir, 'top.nightfarmer.apkparser')
-        if (!fs.existsSync(tmpDir)) {
-          fs.mkdirSync(tmpDir)
-        }
-        if (!fs.existsSync(tmpDir)) {
-          this.warning('临时文件夹创建失败')
-          return
-        }
-        if (path.extname(iconPath) === '.xml') {
-          apkInfo.icon = 'xml'
-          return
-        }
-        await this.unzipIcon(apkPath, tmpDir, iconPath)
-        let iconLocalPath = path.join(tmpDir, path.basename(iconPath))
-        let iconBuf = fs.readFileSync(iconLocalPath)
-        apkInfo.icon = 'data:image/png;base64,' + iconBuf.toString('base64')
 
-        this.deleteFolder(tmpDir)
+        apkInfo.icon = ipc.sendSync('unzipIcon', apkPath, iconPath)
       },
       regexpOne: function (stdout, regExp) {
         let res = regExp.exec(stdout)
@@ -309,53 +262,11 @@
         // console.log(res[1], reg1.lastIndex)
         // res = reg1.exec(stdout)
         // console.log(res[1], reg1.lastIndex)
-      },
-      unzipIcon: async function (zipPath, outPath, filePath) {
-        return new Promise((resolve, reject) => {
-          let unzipDir = path.join(__static, 'unzip')
-          let unzipFileName = ''
-          switch (os.platform()) {
-            case 'darwin':
-              unzipFileName = 'unzip_darwin'
-              break
-            case 'linux':
-              unzipFileName = 'unzip_linux'
-              break
-            case 'windows':
-              unzipFileName = 'unzip.exe'
-              break
-            default:
-              this.warning('不支持当前平台')
-              return
-          }
-          let command = `"${path.join(unzipDir, unzipFileName)}" "${zipPath}" "${outPath}" "${filePath}"`
-          exec(command, (err, stdout, stderr) => {
-            if (err) {
-              console.log(stderr)
-              this.warning('图标解压失败')
-              reject(err)
-              return
-            }
-            resolve()
-          })
-        })
-      },
-      deleteFolder: function (path2Del) {
-        if (fs.existsSync(path2Del)) {
-          fs.readdirSync(path2Del).forEach(function (file) {
-            const curPath = path.join(path2Del, file)
-            if (fs.statSync(curPath).isDirectory()) { // recurse
-              this.deleteFolder(curPath)
-            } else { // delete file
-              fs.unlinkSync(curPath)
-            }
-          })
-          fs.rmdirSync(path2Del)
-        }
       }
     },
     mounted () {
-      this.windowTop = remote.BrowserWindow.getFocusedWindow().isAlwaysOnTop()
+      let focusedWindow = remote.BrowserWindow.getFocusedWindow()
+      this.windowTop = !!(focusedWindow && focusedWindow.isAlwaysOnTop())
     }
   }
 </script>
