@@ -39,14 +39,14 @@ npm install -g cnpm --registry=https://registry.npm.taobao.org
 
 ``` bash
 # 安装依赖
-cnpm install 或 npm install
+cnpm install 或 yarn
 ```
 
 ### 运行
 
 ``` bash
 # 调试运行
-cnpm run dev 或 npm run dev
+cnpm run dev 或 yarn dev
 
 ```
 
@@ -54,19 +54,19 @@ cnpm run dev 或 npm run dev
 
 ``` bash
 # 当前平台构建打包
-cnpm run build 或 npm run build
+cnpm run build 或 yarn build
 
 # 全平台构建打包
-cnpm run build:all 或 npm run build:all
+cnpm run build:all 或 yarn build:all
 
 # 单独打包Mac平台
-cnpm run build:mac 或 npm run build:mac
+cnpm run build:mac 或 yarn build:mac
 
 # 单独打包Linux平台
-cnpm run build:linux 或 npm run build:linux
+cnpm run build:linux 或 yarn build:linux
 
 # 单独打包Windows平台
-cnpm run build:win 或 npm run build:win
+cnpm run build:win 或 yarn build:win
 ```
 
 ---
