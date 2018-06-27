@@ -7,16 +7,16 @@
 ## 预览
 
 ### Mac
-![Mac](https://github.com/NightFarmer/apk-parser/blob/f49e68f03103a6c8c95afc9be44978dcacdfc231/screenshot/on-mac.png?raw=true)
+![Mac](https://github.com/NightFarmer/apk-parser/blob/master/screenshot/on-mac.png?raw=true)
 
 ### Linux
-![Linux](https://github.com/NightFarmer/apk-parser/blob/f49e68f03103a6c8c95afc9be44978dcacdfc231/screenshot/on-linux.png?raw=true)
+![Linux](https://github.com/NightFarmer/apk-parser/blob/master/screenshot/on-linux.png?raw=true)
 
 ### Windows
-![Windows](https://github.com/NightFarmer/apk-parser/blob/f49e68f03103a6c8c95afc9be44978dcacdfc231/screenshot/on-windows.png?raw=true)
+![Windows](https://github.com/NightFarmer/apk-parser/blob/master/screenshot/on-windows.png?raw=true)
 
 ### 操作
-![操作预览](https://github.com/NightFarmer/apk-parser/blob/f49e68f03103a6c8c95afc9be44978dcacdfc231/screenshot/apk-parser-mac.gif?raw=true)
+![操作预览](https://github.com/NightFarmer/apk-parser/blob/master/screenshot/apk-parser-mac.gif?raw=true)
 
 
 ## 下载
