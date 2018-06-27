@@ -353,6 +353,9 @@
         border-style: solid;
         padding-left: 5px;
 
+        font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+        font-size: 11.2px;
+        letter-spacing: .15px;
         cursor: text;
     }
 

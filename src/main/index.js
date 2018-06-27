@@ -3,7 +3,7 @@
 import {app, BrowserWindow} from 'electron'
 import path from 'path'
 import os from 'os'
-import fs from 'fs-extra'
+import fs from 'fs'
 import {exec} from 'child_process'
 
 /**
@@ -77,9 +77,12 @@ function decompressFile (origin) {
     return outFileName
   }
   if (os.platform() === 'linux' && path.basename(origin) === 'aapt_linux') {
-    fs.copySync(path.join(path.join(__static, 'aapt'), 'lib64'), path.join(getTmpPath(), 'lib64'))
+    // wrench.copyDirSyncRecursive(path.join(path.join(__static, 'aapt'), 'lib64'), path.join(getTmpPath(), 'lib64'))
+    copyFolderRecursiveSync(path.join(path.join(__static, 'aapt'), 'lib64'), getTmpPath())
   }
-  fs.copySync(origin, outFileName)
+  // wrench.copyDirSyncRecursive(origin, outFileName)
+  copyFileSync(origin, outFileName)
+  fs.chmodSync(outFileName, '755')
   return outFileName
 }
 
@@ -90,7 +93,7 @@ function newWindow (optionsArg) {
     decompressFile(getAaptFileOriginPath())
     decompressFile(getUnzipFileOriginPath())
   } catch (e) {
-    console.error('init error')
+    console.error('init error', e)
   }
 
   const mainWindow = new BrowserWindow({
@@ -101,7 +104,7 @@ function newWindow (optionsArg) {
     maximizable: false,
     title: 'Apk Parser',
     alwaysOnTop: !!options['alwaysOnTop'],
-    resizable: true,
+    resizable: false,
     fullscreen: false,
     fullscreenable: false
   })
@@ -111,7 +114,8 @@ function newWindow (optionsArg) {
 
   mainWindow.on('closed', () => {
     if (!BrowserWindow.getAllWindows() || BrowserWindow.getAllWindows().length === 0) {
-      fs.removeSync(getTmpPath())
+      // wrench.rmdirSyncRecursive(getTmpPath())
+      deleteFolderRecursive(getTmpPath())
     }
   })
 
@@ -119,7 +123,7 @@ function newWindow (optionsArg) {
     mainWindow.show()
   })
 
-  mainWindow.openDevTools()
+  mainWindow.closeDevTools()
 }
 
 const {ipcMain} = require('electron')
@@ -158,31 +162,54 @@ ipcMain.on('unzipIcon', async (event, apkPath, iconPath) => {
   })
 })
 
-// ipcMain.on('ondragstart', (event, filePath) => {
-//   event.sender.startDrag({
-//     file: filePath,
-//     icon: '/path/to/icon.png'
-//   })
-// })
-
 // app.dock.hide() // 不显示Mac菜单栏
 
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
+function copyFileSync (source, target) {
+  let targetFile = target
 
-/*
-import { autoUpdater } from 'electron-updater'
+  // if target is a directory a new file with the same name will be created
+  if (fs.existsSync(target)) {
+    if (fs.lstatSync(target).isDirectory()) {
+      targetFile = path.join(target, path.basename(source))
+    }
+  }
 
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
+  fs.writeFileSync(targetFile, fs.readFileSync(source))
+}
 
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
- */
+function copyFolderRecursiveSync (source, target) {
+  let files = []
+
+  // check if folder needs to be created or integrated
+  let targetFolder = path.join(target, path.basename(source))
+  if (!fs.existsSync(targetFolder)) {
+    fs.mkdirSync(targetFolder)
+  }
+
+  // copy
+  if (fs.lstatSync(source).isDirectory()) {
+    files = fs.readdirSync(source)
+    files.forEach(function (file) {
+      let curSource = path.join(source, file)
+      if (fs.lstatSync(curSource).isDirectory()) {
+        copyFolderRecursiveSync(curSource, targetFolder)
+      } else {
+        copyFileSync(curSource, targetFolder)
+      }
+    })
+  }
+}
+
+function deleteFolderRecursive (path) {
+  if (fs.existsSync(path)) {
+    fs.readdirSync(path).forEach(function (file) {
+      let curPath = path + '/' + file
+      if (fs.statSync(curPath).isDirectory()) { // recurse
+        deleteFolderRecursive(curPath)
+      } else { // delete file
+        fs.unlinkSync(curPath)
+      }
+    })
+    fs.rmdirSync(path)
+  }
+}
