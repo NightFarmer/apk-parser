@@ -21,7 +21,11 @@
 
 ## 下载
 
-占坑
+[Mac下载](https://oneindex.nightfarmer.top/?/apk-parser/apk-parser-1.0.0.dmg)
+
+[Linux下载](https://oneindex.nightfarmer.top/?/apk-parser/apk-parser-1.0.0-x86_64.AppImage)
+
+[Windows下载](https://oneindex.nightfarmer.top/?/apk-parser/apk-parser+Setup+1.0.0.exe)
 
 ## 源码构建
 
