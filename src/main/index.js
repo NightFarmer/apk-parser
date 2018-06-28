@@ -1,6 +1,6 @@
 'use strict'
 
-import {app, BrowserWindow} from 'electron'
+import {app, BrowserWindow, dialog} from 'electron'
 import path from 'path'
 import os from 'os'
 import fs from 'fs'
@@ -42,7 +42,7 @@ function getAaptFileOriginPath () {
     case 'win32':
       return path.join(aaptDir, 'aapt.exe')
     default:
-    // this.warning('不支持当前平台')
+      throw Error('不支持当前平台')
   }
 }
 
@@ -56,7 +56,7 @@ function getUnzipFileOriginPath () {
     case 'win32':
       return path.join(unzipDir, 'unzip.exe')
     default:
-    // this.warning('不支持当前平台')
+      throw Error('不支持当前平台')
   }
 }
 
@@ -66,7 +66,7 @@ function getTmpPath () {
     fs.mkdirSync(tmpDir)
   }
   if (!fs.existsSync(tmpDir)) {
-    // this.warning('临时文件夹创建失败')
+    throw Error('临时文件夹创建失败')
   }
   return tmpDir
 }
@@ -77,10 +77,8 @@ function decompressFile (origin) {
     return outFileName
   }
   if (os.platform() === 'linux' && path.basename(origin) === 'aapt_linux') {
-    // wrench.copyDirSyncRecursive(path.join(path.join(__static, 'aapt'), 'lib64'), path.join(getTmpPath(), 'lib64'))
     copyFolderRecursiveSync(path.join(path.join(__static, 'aapt'), 'lib64'), getTmpPath())
   }
-  // wrench.copyDirSyncRecursive(origin, outFileName)
   copyFileSync(origin, outFileName)
   fs.chmodSync(outFileName, '755')
   return outFileName
@@ -114,7 +112,6 @@ function newWindow (optionsArg) {
 
   mainWindow.on('closed', () => {
     if (!BrowserWindow.getAllWindows() || BrowserWindow.getAllWindows().length === 0) {
-      // wrench.rmdirSyncRecursive(getTmpPath())
       deleteFolderRecursive(getTmpPath())
     }
   })
@@ -133,33 +130,39 @@ ipcMain.on('newWindow', () => {
 })
 
 ipcMain.on('parseApk', async (event, apkPath) => {
-  let parseCommand = `"${decompressFile(getAaptFileOriginPath())}" d badging "${apkPath}"`
-  exec(parseCommand, (err, stdout, stderr) => {
-    if (err) {
-      console.error(err)
-      event.returnValue = err + 'err' + '-----' + parseCommand
-      return
-    }
-    event.returnValue = stdout
-  })
+  try {
+    let parseCommand = `"${decompressFile(getAaptFileOriginPath())}" d badging "${apkPath}"`
+    exec(parseCommand, (err, stdout, stderr) => {
+      if (err) {
+        event.returnValue = {errMsg: '文件解析失败'}
+        return
+      }
+      event.returnValue = stdout
+    })
+  } catch (e) {
+    event.returnValue = {errMsg: e.message || '解析异常'}
+  }
 })
 
 ipcMain.on('unzipIcon', async (event, apkPath, iconPath) => {
   if (path.extname(iconPath) === '.xml') {
-    return 'err'
+    event.returnValue = {errMsg: '不支持预览'}
+    return
   }
-  let command = `"${decompressFile(getUnzipFileOriginPath())}" "${apkPath}" "${getTmpPath()}" "${iconPath}"`
-  exec(command, (err, stdout, stderr) => {
-    if (err) {
-      console.log(stderr)
-      // this.warning('图标解压失败')
-      event.returnValue = 'err'
-      return
-    }
-    let iconLocalPath = path.join(getTmpPath(), path.basename(iconPath))
-    let iconBuf = fs.readFileSync(iconLocalPath)
-    event.returnValue = 'data:image/png;base64,' + iconBuf.toString('base64')
-  })
+  try {
+    let command = `"${decompressFile(getUnzipFileOriginPath())}" "${apkPath}" "${getTmpPath()}" "${iconPath}"`
+    exec(command, (err, stdout, stderr) => {
+      if (err) {
+        event.returnValue = {errMsg: '图标解压失败'}
+        return
+      }
+      let iconLocalPath = path.join(getTmpPath(), path.basename(iconPath))
+      let iconBuf = fs.readFileSync(iconLocalPath)
+      event.returnValue = 'data:image/png;base64,' + iconBuf.toString('base64')
+    })
+  } catch (e) {
+    event.returnValue = {errMsg: e.message || '图标解压失败'}
+  }
 })
 
 // app.dock.hide() // 不显示Mac菜单栏
@@ -167,7 +170,6 @@ ipcMain.on('unzipIcon', async (event, apkPath, iconPath) => {
 function copyFileSync (source, target) {
   let targetFile = target
 
-  // if target is a directory a new file with the same name will be created
   if (fs.existsSync(target)) {
     if (fs.lstatSync(target).isDirectory()) {
       targetFile = path.join(target, path.basename(source))
@@ -180,13 +182,11 @@ function copyFileSync (source, target) {
 function copyFolderRecursiveSync (source, target) {
   let files = []
 
-  // check if folder needs to be created or integrated
   let targetFolder = path.join(target, path.basename(source))
   if (!fs.existsSync(targetFolder)) {
     fs.mkdirSync(targetFolder)
   }
 
-  // copy
   if (fs.lstatSync(source).isDirectory()) {
     files = fs.readdirSync(source)
     files.forEach(function (file) {

@@ -9,7 +9,7 @@
                 <div class="label">
                     图标
                 </div>
-                <div class="icon_border" v-if="apkInfo.icon==='err'">不支持<br/>预览</div>
+                <div class="icon_border" v-if="!!apkInfo.iconErr">{{apkInfo.iconErr}}</div>
                 <div class="icon_border" v-else-if="!apkInfo.icon"></div>
                 <img :src="apkInfo.icon" class="icon" v-else=""/>
             </div>
@@ -167,7 +167,9 @@
           fileName: '',
           fileSize: '',
           fileMD5: '',
-          permissionList: []
+          permissionList: [],
+
+          iconErr: ''
         },
         windowTop: false
       }
@@ -191,12 +193,15 @@
         e.preventDefault()
         let fileList = e.dataTransfer.files
         const file = fileList[0]
-        const infoStr = ipc.sendSync('parseApk', file.path)
-        console.log(infoStr)
-        infoStr && this.parseInfo(infoStr, file)
+        const infoResult = ipc.sendSync('parseApk', file.path)
+        if (infoResult.errMsg) {
+          this.warning(infoResult.errMsg)
+          return
+        }
+        infoResult && this.parseInfo(infoResult, file)
       },
       warning: function (msg) {
-        remote.dialog.showMessageBox({
+        remote.dialog.showMessageBox(remote.getCurrentWindow(), {
           type: 'warning',
           title: '提示',
           message: msg
@@ -242,7 +247,13 @@
 
         let iconPath = this.regexpOne(stdout, /icon='([^']+)'/g)
 
-        apkInfo.icon = ipc.sendSync('unzipIcon', apkPath, iconPath)
+        let iconData = ipc.sendSync('unzipIcon', apkPath, iconPath)
+        if (!iconData.errMsg) {
+          apkInfo.icon = iconData
+          apkInfo.iconErr = null
+        } else {
+          apkInfo.iconErr = iconData.errMsg
+        }
       },
       regexpOne: function (stdout, regExp) {
         let res = regExp.exec(stdout)
