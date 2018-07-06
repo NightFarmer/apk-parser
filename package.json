@@ -2,7 +2,7 @@
   "name": "apk-parser",
   "version": "1.0.0",
   "author": "NightFarmer <nightfarmer@163.com>",
-  "description": "An electron-vue project",
+  "description": "a GUI application for parsing APK files",
   "license": "GPL",
   "main": "./dist/electron/main.js",
   "scripts": {
