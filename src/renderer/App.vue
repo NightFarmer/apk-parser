@@ -7,7 +7,7 @@
         <div class="container">
             <div class="row">
                 <div class="label">
-                    图标
+                    {{labels.icon}}
                 </div>
                 <div class="icon_border" v-if="!!apkInfo.iconErr">{{apkInfo.iconErr}}</div>
                 <div class="icon_border" v-else-if="!apkInfo.icon"></div>
@@ -21,7 +21,7 @@
                     >
                     </path>
                 </svg>
-                新窗口
+                {{labels.newWindow}}
             </div>
 
 
@@ -43,7 +43,7 @@
 
             <div class="row">
                 <div class="label">
-                    包名
+                    {{labels.package}}
                 </div>
                 <div>
                     <input v-model="apkInfo.package" readonly="readonly" @dblclick="(e)=>e.target.select()"/>
@@ -52,7 +52,7 @@
 
             <div class="row">
                 <div class="label">
-                    名称
+                    {{labels.name}}
                 </div>
                 <div>
                     <input v-model="apkInfo.name" readonly="readonly" @dblclick="(e)=>e.target.select()"/>
@@ -61,7 +61,7 @@
 
             <div class="row">
                 <div class="label">
-                    版本号
+                    {{labels.versionName}}
                 </div>
                 <div>
                     <input v-model="apkInfo.versionName" readonly="readonly" @dblclick="(e)=>e.target.select()"/>
@@ -70,7 +70,7 @@
 
             <div class="row">
                 <div class="label">
-                    内部版本号
+                    {{labels.versionCode}}
                 </div>
                 <div>
                     <input v-model="apkInfo.versionCode" readonly="readonly" @dblclick="(e)=>e.target.select()"/>
@@ -79,7 +79,7 @@
 
             <div class="row">
                 <div class="label">
-                    Min.SDK
+                    {{labels.minSdk}}
                 </div>
                 <div>
                     <input v-model="apkInfo.minSdk" readonly="readonly" @dblclick="(e)=>e.target.select()"/>
@@ -88,7 +88,7 @@
 
             <div class="row">
                 <div class="label">
-                    文件名
+                    {{labels.fileName}}
                 </div>
                 <div>
                     <input v-model="apkInfo.fileName" readonly="readonly" @dblclick="(e)=>e.target.select()"/>
@@ -98,7 +98,7 @@
 
             <div class="row">
                 <div class="label">
-                    文件大小
+                    {{labels.fileSize}}
                 </div>
                 <div>
                     <input v-model="apkInfo.fileSize" readonly="readonly" @dblclick="(e)=>e.target.select()"/>
@@ -107,7 +107,7 @@
 
             <div class="row">
                 <div class="label">
-                    MD5
+                    {{labels.fileMD5}}
                 </div>
                 <div>
                     <input v-model="apkInfo.fileMD5" readonly="readonly" @dblclick="(e)=>e.target.select()"/>
@@ -117,7 +117,7 @@
 
             <div class="row">
                 <div class="label">
-                    权限
+                    {{labels.permission}}
                 </div>
                 <div class="permission_list">
                     <div v-for="item in apkInfo.permissionList"
@@ -129,13 +129,13 @@
 
             <div class="checkbox_area" @click="windowTop=!windowTop">
                 <check-box v-model="windowTop" style="margin-right: 5px"></check-box>
-                <span>窗口置顶</span>
+                <span>{{labels.winTop}}</span>
             </div>
         </div>
 
         <div class="toast_container" v-if="!apkInfo.package">
             <div class="toast_mask"></div>
-            <div class="toast_info">拖拽APK文件到本窗口</div>
+            <div class="toast_info">{{labels.dragFileTip}}</div>
         </div>
     </div>
 </template>
@@ -147,6 +147,7 @@
   import PermissionMap from '../dict/PermissionMap'
   import VersionMap from '../dict/VersionMap'
   import CheckBox from './components/CheckBox'
+  import LocaleStrings from '../dict/LocaleStrings'
 
   const PrimaryColor = '#1aad86'
 
@@ -172,6 +173,16 @@
           iconErr: ''
         },
         windowTop: false
+      }
+    },
+    computed: {
+      labels: function () {
+        let locale = remote.app.getLocale()
+        if (locale && locale.indexOf('zh') !== -1) {
+          return LocaleStrings.zh
+        } else {
+          return LocaleStrings.en
+        }
       }
     },
     watch: {
@@ -453,14 +464,12 @@
         justify-content: center;
 
         cursor: pointer;
-        padding: 6px;
-
         border-radius: 4px;
         font-size: 10px;
         color: #666666;
 
         height: 35px;
-        width: 35px;
+        padding: 6px 10px;
     }
 
     .new_window_button:active {
