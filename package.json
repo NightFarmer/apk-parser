@@ -1,6 +1,6 @@
 {
   "name": "apk-parser",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "NightFarmer <nightfarmer@163.com>",
   "description": "a GUI application for parsing APK files",
   "license": "GPL",

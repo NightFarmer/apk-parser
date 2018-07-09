@@ -12,7 +12,15 @@ const Strings = {
     permission: '权限',
     winTop: '窗口置顶',
     newWindow: '新窗口',
-    dragFileTip: '拖拽APK文件到本窗口'
+    dragFileTip: '拖拽APK文件到本窗口',
+    byte: '字节',
+    warning: '提示',
+    platformUnSupported: '平台不支持',
+    tmpFolderCreateFail: '临时文件夹创建失败',
+    parseFailed: '文件解析失败',
+    parseException: '解析异常',
+    previewUnsupported: '不支持预览',
+    iconDecompressionFailed: '图标解压失败'
   },
   en: {
     icon: 'Icon',
@@ -27,7 +35,15 @@ const Strings = {
     permission: 'Permissions',
     winTop: 'Always on Top',
     newWindow: 'New Window',
-    dragFileTip: 'Drag APK File Here'
+    dragFileTip: 'Drag APK File Here',
+    byte: 'byte',
+    warning: 'warning',
+    platformUnSupported: 'Unsupported Platform',
+    tmpFolderCreateFail: 'Failed To Create Temp Folder',
+    parseFailed: 'File Parsing Failed',
+    parseException: 'File Parsing Exception',
+    previewUnsupported: 'Preview Unsupported',
+    iconDecompressionFailed: 'Icon Decompression Failed'
   }
 }
 

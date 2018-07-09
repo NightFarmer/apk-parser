@@ -177,12 +177,11 @@
     },
     computed: {
       labels: function () {
+        return this.isEN ? LocaleStrings.en : LocaleStrings.zh
+      },
+      isEN: function () {
         let locale = remote.app.getLocale()
-        if (locale && locale.indexOf('zh') !== -1) {
-          return LocaleStrings.zh
-        } else {
-          return LocaleStrings.en
-        }
+        return locale && locale.indexOf('zh') === -1
       }
     },
     watch: {
@@ -214,7 +213,7 @@
       warning: function (msg) {
         remote.dialog.showMessageBox(remote.getCurrentWindow(), {
           type: 'warning',
-          title: '提示',
+          title: this.labels.warning,
           message: msg
           // detail: '232323'
         })
@@ -238,7 +237,11 @@
         }
 
         perList = [...new Set(perList)]
-        apkInfo.permissionList = perList.map(it => PermissionMap[it] ? `${PermissionMap[it]} - ${it}` : it)
+        if (this.isEN) {
+          apkInfo.permissionList = perList
+        } else {
+          apkInfo.permissionList = perList.map(it => PermissionMap[it] ? `${PermissionMap[it]} - ${it}` : it)
+        }
         apkInfo.fileName = apkPath
         apkInfo.fileMD5 = md5File.sync(apkPath)
 
@@ -246,13 +249,13 @@
         const formatB = Number(size).toLocaleString()
         let sizeStr = ''
         if (size > 1024 * 1024 * 1024) {
-          sizeStr = `${formatB}字节 (${(size / (1024 * 1024 * 1024)).toFixed(2)}GB)`
+          sizeStr = `${formatB}${this.labels.byte} (${(size / (1024 * 1024 * 1024)).toFixed(2)}GB)`
         } else if (size > 1024 * 1024) {
-          sizeStr = `${formatB}字节 (${(size / (1024 * 1024)).toFixed(2)}MB)`
+          sizeStr = `${formatB}${this.labels.byte} (${(size / (1024 * 1024)).toFixed(2)}MB)`
         } else if (size > 1024) {
-          sizeStr = `${formatB}字节 (${(size / (1024)).toFixed(2)}KB)`
+          sizeStr = `${formatB}${this.labels.byte} (${(size / (1024)).toFixed(2)}KB)`
         } else {
-          sizeStr = `${formatB}字节 (${(size / (1)).toFixed(2)}B)`
+          sizeStr = `${formatB}${this.labels.byte} (${(size / (1)).toFixed(2)}B)`
         }
         apkInfo.fileSize = sizeStr
 

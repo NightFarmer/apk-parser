@@ -5,6 +5,7 @@ import path from 'path'
 import os from 'os'
 import fs from 'fs'
 import {exec} from 'child_process'
+import LocaleStrings from '../dict/LocaleStrings'
 
 /**
  * Set `__static` path to static files in production
@@ -17,6 +18,15 @@ if (process.env.NODE_ENV !== 'development') {
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
+
+function labels () {
+  return isEN() ? LocaleStrings.en : LocaleStrings.zh
+}
+
+function isEN () {
+  let locale = app.getLocale()
+  return locale && locale.indexOf('zh') === -1
+}
 
 app.on('ready', newWindow)
 
@@ -42,7 +52,7 @@ function getAaptFileOriginPath () {
     case 'win32':
       return path.join(aaptDir, 'aapt.exe')
     default:
-      throw Error('不支持当前平台')
+      throw Error(labels().platformUnSupported)
   }
 }
 
@@ -56,7 +66,7 @@ function getUnzipFileOriginPath () {
     case 'win32':
       return path.join(unzipDir, 'unzip.exe')
     default:
-      throw Error('不支持当前平台')
+      throw Error(labels().platformUnSupported)
   }
 }
 
@@ -66,7 +76,7 @@ function getTmpPath () {
     fs.mkdirSync(tmpDir)
   }
   if (!fs.existsSync(tmpDir)) {
-    throw Error('临时文件夹创建失败')
+    throw Error(labels().tmpFolderCreateFail)
   }
   return tmpDir
 }
@@ -134,26 +144,26 @@ ipcMain.on('parseApk', async (event, apkPath) => {
     let parseCommand = `"${decompressFile(getAaptFileOriginPath())}" d badging "${apkPath}"`
     exec(parseCommand, (err, stdout, stderr) => {
       if (err) {
-        event.returnValue = {errMsg: '文件解析失败'}
+        event.returnValue = {errMsg: labels().parseFailed}
         return
       }
       event.returnValue = stdout
     })
   } catch (e) {
-    event.returnValue = {errMsg: e.message || '解析异常'}
+    event.returnValue = {errMsg: e.message || labels().parseFailed}
   }
 })
 
 ipcMain.on('unzipIcon', async (event, apkPath, iconPath) => {
   if (path.extname(iconPath) === '.xml') {
-    event.returnValue = {errMsg: '不支持预览'}
+    event.returnValue = {errMsg: labels().previewUnsupported}
     return
   }
   try {
     let command = `"${decompressFile(getUnzipFileOriginPath())}" "${apkPath}" "${getTmpPath()}" "${iconPath}"`
     exec(command, (err, stdout, stderr) => {
       if (err) {
-        event.returnValue = {errMsg: '图标解压失败'}
+        event.returnValue = {errMsg: labels().iconDecompressionFailed}
         return
       }
       let iconLocalPath = path.join(getTmpPath(), path.basename(iconPath))
@@ -161,7 +171,7 @@ ipcMain.on('unzipIcon', async (event, apkPath, iconPath) => {
       event.returnValue = 'data:image/png;base64,' + iconBuf.toString('base64')
     })
   } catch (e) {
-    event.returnValue = {errMsg: e.message || '图标解压失败'}
+    event.returnValue = {errMsg: e.message || labels().iconDecompressionFailed}
   }
 })
 

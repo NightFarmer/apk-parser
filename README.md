@@ -1,10 +1,12 @@
-# Apk Parser
+## Introduction
 
-基于electron、vue、golang开发的apk文件解析桌面工具，跨平台支持Mac、Linux以及Windows。  
-使用Golang高速解析apk图标。  
-内置aapt解析apk信息。
+This is a desktop tool based on electron, vue, golang for parsing apk files. It supports Mac, Linux and Windows across platforms.  
+Use Golang to parse the apk icon at high speed.  
+Built-in aapt parsing apk information.
 
-## 预览
+([文档还是中文的好](/NightFarmer/apk-parser/blob/master/README.md))
+
+## Screenshot
 
 <table>
     <tr align="center">
@@ -12,71 +14,60 @@
         <td><b>Linux</b></td>
     </tr>
     <tr valign="top" align="center">
-        <td width="50%"><img  src="https://github.com/NightFarmer/apk-parser/blob/master/screenshot/on-mac.png?raw=true"/></td>
+        <td width="50%"><img  src="https://github.com/NightFarmer/apk-parser/blob/master/screenshot/on-mac-en.png?raw=true"/></td>
         <td width="50%"><img  src="https://github.com/NightFarmer/apk-parser/blob/master/screenshot/on-linux.png?raw=true"/></td>
     </tr>
     <tr align="center">
         <td><b>Windows</b></td>
-        <td><b>操作</b></td>
+        <td><b>operate</b></td>
     </tr>
     <tr valign="top" align="center">
         <td width="50%"><img  src="https://github.com/NightFarmer/apk-parser/blob/master/screenshot/on-windows.png?raw=true"/></td>
-        <td width="50%"><img  src="https://github.com/NightFarmer/apk-parser/blob/master/screenshot/apk-parser-mac.gif?raw=true"/></td>
+        <td width="50%"><img  src="https://github.com/NightFarmer/apk-parser/blob/master/screenshot/apk-parser-mac-en.gif?raw=true"/></td>
     </tr>
 </table>
 
-## 下载
+## Download
 
-[Mac下载](https://oneindex.nightfarmer.top/?/apk-parser/apk-parser-1.0.0.dmg)
+**[To Download](https://github.com/NightFarmer/apk-parser/releases)**
 
-[Linux下载](https://oneindex.nightfarmer.top/?/apk-parser/apk-parser-1.0.0-x86_64.AppImage)
+## Source code construction
 
-[Windows下载](https://oneindex.nightfarmer.top/?/apk-parser/apk-parser+Setup+1.0.0.exe)
+Source code build requires NodeJs environment, download and install on [NodeJs website](https://nodejs.org/) or use [NVM](https://github.com/creationix/nvm) to install.
+    
+The decompression command is written in Golang and built into the /static/unzip folder, so there is no need to prepare the Golang development environment.
 
-## 源码构建
 
-源码构建需要NodeJs环境，通过[Node官网](https://nodejs.org/)下载安装或使用[NVM](https://github.com/creationix/nvm)进行安装。  
-使用Golang编写的解压命令已经编译后内置在/static/unzip文件夹中，所以不需要额外搭建Golang环境。  
-electron构建需要下载依赖文件，建议使用[cnpm](https://npm.taobao.org/)代替npm进行构建。  
-
-### 安装cnpm(可选)
-
-```bash
-npm install -g cnpm --registry=https://registry.npm.taobao.org
-```
-
-### 安装依赖
+### Installation dependence
 
 ``` bash
-# 安装依赖
 cnpm install 或 yarn
 ```
 
-### 运行
+### Run
 
 ``` bash
-# 调试运行
-cnpm run dev 或 yarn dev
+cnpm run dev or yarn dev
 
 ```
 
-### 打包
+### Build
 
 ``` bash
-# 当前平台构建打包
-cnpm run build 或 yarn build
+# to build on current platform
+cnpm run build or yarn build
 
-# 全平台构建打包
-cnpm run build:all 或 yarn build:all
+# to build on all platform
+cnpm run build:all or yarn build:all
 
-# 单独打包Mac平台
-cnpm run build:mac 或 yarn build:mac
+# to build on macOS
+cnpm run build:mac or yarn build:mac
 
-# 单独打包Linux平台
-cnpm run build:linux 或 yarn build:linux
+# to build on linux
+cnpm run build:linux or yarn build:linux
 
-# 单独打包Windows平台
-cnpm run build:win 或 yarn build:win
+# to build on windows
+cnpm run build:win or yarn build:win
 ```
 
 ---
