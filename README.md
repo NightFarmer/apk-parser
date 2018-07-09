@@ -4,7 +4,7 @@ This is a desktop tool based on electron, vue, golang for parsing apk files. It 
 Use Golang to parse the apk icon at high speed.  
 Built-in aapt parsing apk information.
 
-([文档还是中文的好](/NightFarmer/apk-parser/blob/master/README.md))
+([文档还是中文的好](https://github.com/NightFarmer/apk-parser/blob/master/README_CN.md))
 
 ## Screenshot
 
@@ -41,13 +41,13 @@ The decompression command is written in Golang and built into the /static/unzip 
 ### Installation dependence
 
 ``` bash
-cnpm install 或 yarn
+npm install or yarn
 ```
 
 ### Run
 
 ``` bash
-cnpm run dev or yarn dev
+npm run dev or yarn dev
 
 ```
 
@@ -55,19 +55,19 @@ cnpm run dev or yarn dev
 
 ``` bash
 # to build on current platform
-cnpm run build or yarn build
+npm run build or yarn build
 
 # to build on all platform
-cnpm run build:all or yarn build:all
+npm run build:all or yarn build:all
 
 # to build on macOS
-cnpm run build:mac or yarn build:mac
+npm run build:mac or yarn build:mac
 
 # to build on linux
-cnpm run build:linux or yarn build:linux
+npm run build:linux or yarn build:linux
 
 # to build on windows
-cnpm run build:win or yarn build:win
+npm run build:win or yarn build:win
 ```
 
 ---
