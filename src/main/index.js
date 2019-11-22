@@ -46,11 +46,11 @@ function getAaptFileOriginPath () {
   let aaptDir = path.join(__static, 'aapt')
   switch (os.platform()) {
     case 'darwin':
-      return path.join(aaptDir, 'aapt_darwin')
+      return path.join(aaptDir, 'aapt2_darwin')
     case 'linux':
-      return path.join(aaptDir, 'aapt_linux')
+      return path.join(aaptDir, 'aapt2_linux')
     case 'win32':
-      return path.join(aaptDir, 'aapt.exe')
+      return path.join(aaptDir, 'aapt2.exe')
     default:
       throw Error(labels().platformUnSupported)
   }
